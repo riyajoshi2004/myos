@@ -103,12 +103,91 @@ void terminal_writestring(const char* data) {
     terminal_write(data, strlen(data));
 }
 
+static void print_uint(unsigned int value, unsigned int base, int uppercase) {
+    char buffer[32];
+    const char* digits = uppercase ? "0123456789ABCDEF" : "0123456789abcdef";
+    int i = 0;
+
+    if (value == 0) {
+        terminal_putchar('0');
+        return;
+    }
+
+    while (value > 0) {
+        buffer[i++] = digits[value % base];
+        value /= base;
+    }
+
+    while (i > 0) {
+        terminal_putchar(buffer[--i]);
+    }
+}
+
+static void print_int(int value) {
+    if (value < 0) {
+        terminal_putchar('-');
+        print_uint((unsigned int)(-value), 10, 0);
+    } else {
+        print_uint((unsigned int)value, 10, 0);
+    }
+}
+
+void kprintf(const char* format, ...) {
+    __builtin_va_list args;
+    __builtin_va_start(args, format);
+
+    for (size_t i = 0; format[i] != '\0'; i++) {
+        if (format[i] != '%') {
+            terminal_putchar(format[i]);
+            continue;
+        }
+
+        i++;
+        switch (format[i]) {
+            case 'd': {
+                int val = __builtin_va_arg(args, int);
+                print_int(val);
+                break;
+            }
+            case 'x': {
+                unsigned int val = __builtin_va_arg(args, unsigned int);
+                print_uint(val, 16, 0);
+                break;
+            }
+            case 's': {
+                const char* s = __builtin_va_arg(args, const char*);
+                terminal_writestring(s);
+                break;
+            }
+            case 'c': {
+                int c = __builtin_va_arg(args, int);
+                terminal_putchar((char) c);
+                break;
+            }
+            case '%': {
+                terminal_putchar('%');
+                break;
+            }
+            default:
+                terminal_putchar('%');
+                terminal_putchar(format[i]);
+                break;
+        }
+    }
+
+    __builtin_va_end(args);
+}
+
 void kernel_main(void) {
     terminal_initialize();
     terminal_writestring("Hello, kernel World!\n");
-    terminal_writestring("Line 2: Terminal driver working!\n");
-    terminal_setcolor(vga_entry_color(VGA_COLOR_LIGHT_GREEN, VGA_COLOR_BLACK));
-    terminal_writestring("This line is green!\n");
+
+    kprintf("Decimal: %d\n", 12345);
+    kprintf("Negative: %d\n", -42);
+    kprintf("Hex: %x\n", 255);
+    kprintf("String: %s\n", "testing kprintf");
+    kprintf("Char: %c\n", 'A');
+    kprintf("Mixed: value=%d hex=%x name=%s\n", 100, 100, "myOS");
 
     for (;;) {}
 }
