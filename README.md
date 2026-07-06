@@ -28,6 +28,7 @@ A minimal x86 operating system built from the ground up in C and x86 Assembly, w
 ![Screenshot 8](screenshot8.png)
 
 ## Project Structure
+```text
 myos/
 ├── boot/
 │   ├── boot.s              # Entry point, multiboot header, stack setup
@@ -49,6 +50,7 @@ myos/
 │   └── multiboot.h
 ├── linker.ld                  # Custom memory layout linker script
 └── isodir/                    # GRUB ISO staging directory
+```
 ## Building From Source
 
 ### Prerequisites
@@ -110,8 +112,8 @@ qemu-system-i386 -cdrom myos.iso
 
 ## Acknowledgments
 
-Built while learning from the [OSDev Wiki](https://wiki.osdev.org) and the "Roll Your Own Toy UNIX-Clone OS" tutorial series.
+Built while learning from the [OSDev Wiki](https://wiki.osdev.org) .
 
 ## License
 
-MIT License (or choose your own)
+MIT License 
