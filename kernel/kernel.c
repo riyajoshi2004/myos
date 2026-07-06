@@ -1,4 +1,5 @@
-
+#include "multiboot.h"
+#include "pmm.h"
 #include <stdint.h>
 #include "idt.h"
 #include <stddef.h>
@@ -181,22 +182,28 @@ void kprintf(const char* format, ...) {
     __builtin_va_end(args);
 }
 
-void kernel_main(void) {
+extern uint32_t kernel_end;
 
+void kernel_main(uint32_t magic, uint32_t addr) {
     terminal_initialize();
     gdt_install();
     idt_install();
     __asm__ __volatile__("sti");
+
     terminal_writestring("Hello, kernel World!\n");
 
-    kprintf("Decimal: %d\n", 12345);
-    kprintf("Negative: %d\n", -42);
-    kprintf("Hex: %x\n", 255);
-    kprintf("String: %s\n", "testing kprintf");
-    kprintf("Char: %c\n", 'A');
-    kprintf("Mixed: value=%d hex=%x name=%s\n", 100, 100, "myOS");
-    
+    if (magic != 0x2BADB002) {
+        kprintf("Invalid multiboot magic: %x\n", magic);
+    } else {
+        struct multiboot_info* mbi = (struct multiboot_info*) addr;
+        pmm_init(mbi, (uint32_t)&kernel_end);
+    }
+
+    terminal_writestring("\nType something: ");
+
     for (;;) {
-    __asm__ __volatile__("hlt");
+        __asm__ __volatile__("hlt");
+    }
 }
-}
+
+    

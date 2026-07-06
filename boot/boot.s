@@ -21,7 +21,8 @@ stack_top:
 .type _start, @function
 _start:
     mov $stack_top, %esp
-
+    push %ebx        # Multiboot info structure pointer (pushed first = 2nd param)
+    push %eax        # Multiboot magic number (pushed last = 1st param)
     call kernel_main
 
     cli
