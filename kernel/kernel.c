@@ -194,6 +194,5 @@ void kernel_main(void) {
     kprintf("String: %s\n", "testing kprintf");
     kprintf("Char: %c\n", 'A');
     kprintf("Mixed: value=%d hex=%x name=%s\n", 100, 100, "myOS");
-
     for (;;) {}
 }
