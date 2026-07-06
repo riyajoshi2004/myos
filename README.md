@@ -16,16 +16,17 @@ A minimal x86 operating system built from the ground up in C and x86 Assembly, w
 - **Paging** — virtual memory enabled with identity-mapped first 4MB
 - **Heap Allocator (`kmalloc`/`kfree`)** — dynamic memory allocation with free-block reuse
 
+
 ## Screenshots
 
-![Booting OS](screenshot1.png)
-![Terminal Output](screenshot2.png)
-![Memory Management](screenshot3.png)
-![Screenshot 4](screenshot4.png)
-![Screenshot 5](screenshot5.png)
-![Screenshot 6](screenshot6.png)
-![Screenshot 7](screenshot7.png)
-![Screenshot 8](screenshot8.png)
+![Booting OS](screenshots/screenshot1.png)
+![Terminal Output](screenshots/screenshot2.png)
+![Memory Management](screenshots/screenshot3.png)
+![Screenshot 4](screenshots/screenshot4.png)
+![Screenshot 5](screenshots/screenshot5.png)
+![Screenshot 6](screenshots/screenshot6.png)
+![Screenshot 7](screenshots/screenshot7.png)
+![Screenshot 8](screenshots/screenshot8.png)
 
 ## Project Structure
 ```text
