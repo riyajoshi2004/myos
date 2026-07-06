@@ -1,3 +1,4 @@
+#include "kmalloc.h"
 #include "paging.h"
 #include "multiboot.h"
 #include "pmm.h"
@@ -199,8 +200,9 @@ void kernel_main(uint32_t magic, uint32_t addr) {
         struct multiboot_info* mbi = (struct multiboot_info*) addr;
         pmm_init(mbi, (uint32_t)&kernel_end);
         paging_init();
-        }
+        kmalloc_init((uint32_t)&kernel_end + 0x10000, 0x100000);
 
+        }
     terminal_writestring("\nType something: ");
 
     for (;;) {
@@ -209,3 +211,4 @@ void kernel_main(uint32_t magic, uint32_t addr) {
 }
 
 
+	
