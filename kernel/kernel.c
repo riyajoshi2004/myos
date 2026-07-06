@@ -186,6 +186,7 @@ void kernel_main(void) {
     terminal_initialize();
     gdt_install();
     idt_install();
+    __asm__ __volatile__("sti");
     terminal_writestring("Hello, kernel World!\n");
 
     kprintf("Decimal: %d\n", 12345);
@@ -194,5 +195,8 @@ void kernel_main(void) {
     kprintf("String: %s\n", "testing kprintf");
     kprintf("Char: %c\n", 'A');
     kprintf("Mixed: value=%d hex=%x name=%s\n", 100, 100, "myOS");
-    for (;;) {}
+    
+    for (;;) {
+    __asm__ __volatile__("hlt");
+}
 }
