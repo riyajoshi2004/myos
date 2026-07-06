@@ -1,4 +1,6 @@
+
 #include <stdint.h>
+#include "idt.h"
 #include <stddef.h>
 #include "gdt.h"
 
@@ -183,6 +185,7 @@ void kernel_main(void) {
 
     terminal_initialize();
     gdt_install();
+    idt_install();
     terminal_writestring("Hello, kernel World!\n");
 
     kprintf("Decimal: %d\n", 12345);
