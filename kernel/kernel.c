@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stddef.h>
+#include "gdt.h"
 
 /* Hardware text mode color constants. */
 enum vga_color {
@@ -179,7 +180,9 @@ void kprintf(const char* format, ...) {
 }
 
 void kernel_main(void) {
+
     terminal_initialize();
+    gdt_install();
     terminal_writestring("Hello, kernel World!\n");
 
     kprintf("Decimal: %d\n", 12345);
