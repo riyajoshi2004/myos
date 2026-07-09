@@ -29,29 +29,41 @@ A minimal x86 operating system built from the ground up in C and x86 Assembly, w
 ![Screenshot 8](screenshots/screenshot8.png)
 
 ## Project Structure
+
 ```text
 myos/
 ├── boot/
 │   ├── boot.s              # Entry point, multiboot header, stack setup
-│   ├── gdt_flush.s          # Loads the GDT
-│   ├── idt_flush.s          # Loads the IDT
-│   ├── isr.s                 # CPU exception stubs (0-31)
-│   ├── irq.s                 # Hardware interrupt stubs (32-47)
-│   └── paging_enable.s       # Enables paging via CR0/CR3
+│   ├── gdt_flush.s         # Loads the GDT
+│   ├── idt_flush.s         # Loads the IDT
+│   ├── isr.s                # CPU exception stubs (0-31)
+│   ├── irq.s                # Hardware interrupt stubs (32-47)
+│   └── paging_enable.s      # Enables paging via CR0/CR3
 ├── kernel/
-│   ├── kernel.c               # kernel_main, VGA terminal, kprintf
-│   ├── gdt.c / gdt.h
-│   ├── idt.c / idt.h
-│   ├── isr.c
-│   ├── pic.c / pic.h
-│   ├── keyboard.c
-│   ├── pmm.c / pmm.h
-│   ├── paging.c / paging.h
-│   ├── kmalloc.c / kmalloc.h
-│   └── multiboot.h
+│   ├── src/
+│   │   ├── kernel.c          # kernel_main, VGA terminal, kprintf
+│   │   ├── gdt.c
+│   │   ├── idt.c
+│   │   ├── isr.c
+│   │   ├── pic.c
+│   │   ├── keyboard.c
+│   │   ├── pmm.c
+│   │   ├── paging.c
+│   │   └── kmalloc.c
+│   └── include/
+│       ├── gdt.h
+│       ├── idt.h
+│       ├── pic.h
+│       ├── pmm.h
+│       ├── paging.h
+│       ├── kmalloc.h
+│       └── multiboot.h
+├── screenshots/               # Project screenshots
 ├── linker.ld                  # Custom memory layout linker script
+├── Makefile                   # Build automation
 └── isodir/                    # GRUB ISO staging directory
 ```
+
 ## Building From Source
 
 ### Prerequisites
@@ -64,44 +76,14 @@ sudo apt install build-essential bison flex libgmp3-dev libmpc-dev libmpfr-dev t
 
 Cross-compiler setup (Binutils + GCC targeting `i686-elf`) is documented separately — see [OSDev Wiki: GCC Cross-Compiler](https://wiki.osdev.org/GCC_Cross-Compiler).
 
-### Build Steps
+### Build & Run
 
 ```bash
-# Assemble
-i686-elf-as boot/boot.s -o boot/boot.o
-i686-elf-as boot/gdt_flush.s -o boot/gdt_flush.o
-i686-elf-as boot/idt_flush.s -o boot/idt_flush.o
-i686-elf-as boot/isr.s -o boot/isr.o
-i686-elf-as boot/irq.s -o boot/irq.o
-i686-elf-as boot/paging_enable.s -o boot/paging_enable.o
-
-# Compile
-i686-elf-gcc -c kernel/kernel.c -o kernel/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c kernel/gdt.c -o kernel/gdt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c kernel/idt.c -o kernel/idt.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c kernel/isr.c -o kernel/isr.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c kernel/pic.c -o kernel/pic.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c kernel/keyboard.c -o kernel/keyboard.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c kernel/pmm.c -o kernel/pmm.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c kernel/paging.c -o kernel/paging.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
-i686-elf-gcc -c kernel/kmalloc.c -o kernel/kmalloc.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
-
-# Link
-i686-elf-gcc -T linker.ld -o myos.bin -ffreestanding -O2 -nostdlib \
-    boot/boot.o boot/gdt_flush.o boot/idt_flush.o boot/isr.o boot/irq.o boot/paging_enable.o \
-    kernel/kernel.o kernel/gdt.o kernel/idt.o kernel/isr.o kernel/pic.o kernel/keyboard.o \
-    kernel/pmm.o kernel/paging.o kernel/kmalloc.o -lgcc
-
-# Create bootable ISO
-cp myos.bin isodir/boot/myos.bin
-grub-mkrescue -o myos.iso isodir
+make        # builds myos.iso
+make run    # builds and boots it in QEMU
+make clean  # removes all build artifacts
 ```
 
-### Running
-
-```bash
-qemu-system-i386 -cdrom myos.iso
-```
 
 ## Roadmap
 
